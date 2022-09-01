@@ -1,23 +1,36 @@
-import logo from './logo.svg';
+
+import  Axios from 'axios';
+import { useState } from 'react';
 import './App.css';
 
 function App() {
+  const [filedata, setFiledata] = useState('');
+
+  const handleChange = file => {
+    setFiledata(file[0]);
+  }
+
+  const submitData = e => {
+    e.preventDefault();
+    const fData = new FormData();
+
+    fData.append('file', filedata);
+
+    Axios.post("http://127.0.0.1:8000/api/post-file", fData)
+    .then((res) => {
+      console.log("response", res);
+    })
+    .catch((e) => {
+      console.error("failed", e);
+    });
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <form onSubmit={submitData}>
+
+        <input name='file' id='file' type='file' onChange={(e) => handleChange(e.target.file)}/>
+        <button type='submit' onClick={submitData}>Upload</button>
+        </form>
     </div>
   );
 }
